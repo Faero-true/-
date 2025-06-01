@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Интерактивный тест по ЖКТ (ГИА 2025)</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; max-width: 900px; margin: auto; }
+    h1 { text-align: center; }
+    .question { margin-bottom: 20px; }
+    .feedback { margin-top: 5px; font-weight: bold; }
+    .correct { color: green; }
+    .incorrect { color: red; }
+    #questions-container { margin-top: 30px; display: none; }
+    select, button { font-size: 1em; padding: 5px; }
+    h2 { margin-top: 40px; }
+  </style>
+  <script>
+    // Ключ правильных ответов для ситуаций №1–№5 (по таблице на фото)
+    const answers = {
+      "1": { // №1 Норма
+        "q1": "Без особенностей",
+        "q2": "Без особенностей",
+        "q3": "Не определяется",
+        "q4": "Нет",
+        "q5": "Нет изменений",
+        "q6": "Нет",
+        "q7": "У края реберной дуги",
+        "q8": "Не пальпируется",
+        "q9": "Не пальпируется",
+        "q10": "Толстая кишка не пальпируется",
+        "q11": "Норма",
+        "q12": "Не требуется"
+      },
+      "2": { // №2 Гепатомегалия, желтуха
+        "q1": "Желтушность склер и слизистых",
+        "q2": "Без особенностей",
+        "q3": "В эпигастрии",
+        "q4": "Нет",
+        "q5": "Нет изменений",
+        "q6": "Нет",
+        "q7": "Расположена на 1 см и более ниже реберной дуги",
+        "q8": "Увеличена, гладкая поверхность, край закруглен",
+        "q9": "Не пальпируется",
+        "q10": "Толстая кишка не пальпируется",
+        "q11": "Гепатомегалия, желтуха",
+        "q12": "УЗИ органов брюшной полости"
+      },
+      "3": { // №3 Спленомегалия
+        "q1": "Без особенностей",
+        "q2": "Без особенностей",
+        "q3": "В эпигастрии",
+        "q4": "Нет",
+        "q5": "Нет изменений",
+        "q6": "Нет",
+        "q7": "У края реберной дуги",
+        "q8": "Не пальпируется",
+        "q9": "Увеличена в размере, пальпируется",
+        "q10": "Толстая кишка не пальпируется",
+        "q11": "Спленомегалия",
+        "q12": "УЗИ органов брюшной полости"
+      },
+      "4": { // №4 Гепатоспленомегалия, желтуха
+        "q1": "Желтушность склер и слизистых",
+        "q2": "Без особенностей",
+        "q3": "В эпигастрии",
+        "q4": "Нет",
+        "q5": "Нет изменений",
+        "q6": "Нет",
+        "q7": "Расположена на 1 см и более ниже реберной дуги",
+        "q8": "Увеличена, бугристая поверхность, край неровный",
+        "q9": "Увеличена в размере, пальпируется",
+        "q10": "Толстая кишка не пальпируется",
+        "q11": "Гепатоспленомегалия, желтуха",
+        "q12": "УЗИ органов брюшной полости"
+      },
+      "5": { // №5 Асцит, гепатомегалия, желтуха
+        "q1": "Желтушность склер и слизистых",
+        "q2": "Увеличен в размере",
+        "q3": "В эпигастрии",
+        "q4": "Нет",
+        "q5": "Нет изменений",
+        "q6": "Да",
+        "q7": "Расположена на 1 см и более ниже реберной дуги",
+        "q8": "Увеличена, бугристая поверхность, край неровный",
+        "q9": "Не пальпируется",
+        "q10": "Толстая кишка не пальпируется",
+        "q11": "Асцит, гепатомегалия, желтуха",
+        "q12": "УЗИ органов брюшной полости"
+      }
+    };
+
+    // Проверка ответа на выбранный вопрос
+    function checkAnswer(qName, feedbackId) {
+      const selected = document.querySelector(`input[name="${qName}"]:checked`);
+      const scenario = document.getElementById("scenario-select").value;
+      if (!selected) return;
+      const userValue = selected.value;
+      const correctValue = answers[scenario][qName];
+      const fb = document.getElementById(feedbackId);
+      if (userValue === correctValue) {
+        fb.textContent = "Правильно!";
+        fb.className = "feedback correct";
+      } else {
+        fb.textContent = "Неправильно. Правильный ответ: " + correctValue;
+        fb.className = "feedback incorrect";
+      }
+    }
+
+    // Отображаем или скрываем блок с вопросами при выборе ситуации
+    function onScenarioChange() {
+      const sel = document.getElementById("scenario-select");
+      const container = document.getElementById("questions-container");
+      if (sel.value === "") {
+        container.style.display = "none";
+      } else {
+        // Сбрасываем предыдущие выборы и отзывы
+        const inputs = container.querySelectorAll("input[type=radio]");
+        inputs.forEach(inp => inp.checked = false);
+        const feedbacks = container.querySelectorAll(".feedback");
+        feedbacks.forEach(fb => { fb.textContent = ""; fb.className = "feedback"; });
+        container.style.display = "block";
+      }
+    }
+
+    window.addEventListener("DOMContentLoaded", () => {
+      document.getElementById("scenario-select").addEventListener("change", onScenarioChange);
+    });
+  </script>
+</head>
+<body>
+  <h1>ЖКТ – ГИА для выпускников лечебного факультета 2025</h1>
+  <p>Выберите клиническую ситуацию (сценарий):</p>
+  <select id="scenario-select">
+    <option value="">-- выберите ситуацию --</option>
+    <option value="1">Ситуация 1: Норма</option>
+    <option value="2">Ситуация 2: Гепатомегалия, желтуха</option>
+    <option value="3">Ситуация 3: Спленомегалия</option>
+    <option value="4">Ситуация 4: Гепатоспленомегалия, желтуха</option>
+    <option value="5">Ситуация 5: Асцит, гепатомегалия, желтуха</option>
+  </select>
+
+  <div id="questions-container">
+    <h2>Вопросы</h2>
+
+    <!-- Вопрос 1 -->
+    <div class="question">
+      <p><strong>Вопрос 1. Осмотр склер глаз и слизистых:</strong></p>
+      <label><input type="radio" name="q1" value="Без особенностей" onclick="checkAnswer('q1','fb1')"> a. Без особенностей</label><br>
+      <label><input type="radio" name="q1" value="Желтушность склер и слизистых" onclick="checkAnswer('q1','fb1')"> b. Желтушность склер и слизистых</label><br>
+      <label><input type="radio" name="q1" value="Бледность конъюнктивы" onclick="checkAnswer('q1','fb1')"> c. Бледность конъюнктивы</label>
+      <div id="fb1" class="feedback"></div>
+    </div>
+
+    <!-- Вопрос 2 -->
+    <div class="question">
+      <p><strong>Вопрос 2. Осмотр живота:</strong></p>
+      <label><input type="radio" name="q2" value="Без особенностей" onclick="checkAnswer('q2','fb2')"> a. Без особенностей</label><br>
+      <label><input type="radio" name="q2" value="Увеличен в размере" onclick="checkAnswer('q2','fb2')"> b. Увеличен в размере</label><br>
+      <label><input type="radio" name="q2" value="Расширение подкожных вен" onclick="checkAnswer('q2','fb2')"> c. Расширение подкожных вен</label>
+      <div id="fb2" class="feedback"></div>
+    </div>
+
+    <!-- Вопрос 3 -->
+    <div class="question">
+      <p><strong>Вопрос 3. Болезненность при пальпации живота:</strong></p>
+      <label><input type="radio" name="q3" value="Не определяется" onclick="checkAnswer('q3','fb3')"> a. Не определяется</label><br>
+      <label><input type="radio" name="q3" value="В эпигастрии" onclick="checkAnswer('q3','fb3')"> b. В эпигастрии</label><br>
+      <label><input type="radio" name="q3" value="В правом подреберье" onclick="checkAnswer('q3','fb3')"> c. В правом подреберье</label><br>
+      <label><input type="radio" name="q3" value="В левом подреберье" onclick="checkAnswer('q3','fb3')"> d. В левом подреберье</label><br>
+      <label><input type="radio" name="q3" value="В левой подвздошной области" onclick="checkAnswer('q3','fb3')"> e. В левой подвздошной области</label><br>
+      <label><input type="radio" name="q3" value="В правой подвздошной области" onclick="checkAnswer('q3','fb3')"> f. В правой подвздошной области</label><br>
+      <label><input type="radio" name="q3" value="В околопупочной области" onclick="checkAnswer('q3','fb3')"> g. В околопупочной области</label>
+      <div id="fb3" class="feedback"></div>
+    </div>
+
+    <!-- Вопрос 4 -->
+    <div class="question">
+      <p><strong>Вопрос 4. Наличие напряжения мышц передней брюшной стенки:</strong></p>
+      <label><input type="radio" name="q4" value="Да" onclick="checkAnswer('q4','fb4')"> a. Да</label><br>
+      <label><input type="radio" name="q4" value="Нет" onclick="checkAnswer('q4','fb4')"> b. Нет</label>
+      <div id="fb4" class="feedback"></div>
+    </div>
+
+    <!-- Вопрос 5 -->
+    <div class="question">
+      <p><strong>Вопрос 5. Наличие диастаза прямых мышц живота или расширения пупочного кольца:</strong></p>
+      <label><input type="radio" name="q5" value="Есть диастаз прямых мышц" onclick="checkAnswer('q5','fb5')"> a. Есть диастаз прямых мышц</label><br>
+      <label><input type="radio" name="q5" value="Есть расширение пупочного кольца" onclick="checkAnswer('q5','fb5')"> b. Есть расширение пупочного кольца</label><br>
+      <label><input type="radio" name="q5" value="Нет изменений" onclick="checkAnswer('q5','fb5')"> c. Нет изменений</label>
+      <div id="fb5" class="feedback"></div>
+    </div>
+
+    <!-- Вопрос 6 -->
+    <div class="question">
+      <p><strong>Вопрос 6. Наличие асцита (положительный симптом флюктуации):</strong></p>
+      <label><input type="radio" name="q6" value="Да" onclick="checkAnswer('q6','fb6')"> a. Да</label><br>
+      <label><input type="radio" name="q6" value="Нет" onclick="checkAnswer('q6','fb6')"> b. Нет</label>
+      <div id="fb6" class="feedback"></div>
+    </div>
+
+    <!-- Вопрос 7 -->
+    <div class="question">
+      <p><strong>Вопрос 7. Нижняя граница печени по среднеключичной линии:</strong></p>
+      <label><input type="radio" name="q7" value="У края реберной дуги" onclick="checkAnswer('q7','fb7')"> a. У края реберной дуги</label><br>
+      <label><input type="radio" name="q7" value="Расположена на 1 см и более ниже реберной дуги" onclick="checkAnswer('q7','fb7')"> b. Расположена на 1 см и более ниже реберной дуги</label>
+      <div id="fb7" class="feedback"></div>
+    </div>
+
+    <!-- Вопрос 8 -->
+    <div class="question">
+      <p><strong>Вопрос 8. Печень:</strong></p>
+      <label><input type="radio" name="q8" value="Не пальпируется" onclick="checkAnswer('q8','fb8')"> a. Не пальпируется</label><br>
+      <label><input type="radio" name="q8" value="Увеличена, гладкая поверхность, край закруглен" onclick="checkAnswer('q8','fb8')"> b. Увеличена, гладкая поверхность, край закруглен</label><br>
+      <label><input type="radio" name="q8" value="Увеличена, бугристая поверхность, край неровный" onclick="checkAnswer('q8','fb8')"> c. Увеличена, бугристая поверхность, край неровный</label>
+      <div id="fb8" class="feedback"></div>
+    </div>
+
+    <!-- Вопрос 9 -->
+    <div class="question">
+      <p><strong>Вопрос 9. Селезенка:</strong></p>
+      <label><input type="radio" name="q9" value="Не пальпируется" onclick="checkAnswer('q9','fb9')"> a. Не пальпируется</label><br>
+      <label><input type="radio" name="q9" value="Увеличена в размере, пальпируется" onclick="checkAnswer('q9','fb9')"> b. Увеличена в размере, пальпируется</label>
+      <div id="fb9" class="feedback"></div>
+    </div>
+
+    <!-- Вопрос 10 -->
+    <div class="question">
+      <p><strong>Вопрос 10. Методом глубокой пальпации у пациента определяется:</strong></p>
+      <label><input type="radio" name="q10" value="Сигмовидная кишка" onclick="checkAnswer('q10','fb10')"> a. Сигмовидная кишка</label><br>
+      <label><input type="radio" name="q10" value="Слепая кишка" onclick="checkAnswer('q10','fb10')"> b. Слепая кишка</label><br>
+      <label><input type="radio" name="q10" value="Восходящая ободочная кишка" onclick="checkAnswer('q10','fb10')"> c. Восходящая ободочная кишка</label><br>
+      <label><input type="radio" name="q10" value="Нисходящая ободочная кишка" onclick="checkAnswer('q10','fb10')"> d. Нисходящая ободочная кишка</label><br>
+      <label><input type="radio" name="q10" value="Поперечная ободочная кишка" onclick="checkAnswer('q10','fb10')"> e. Поперечная ободочная кишка</label><br>
+      <label><input type="radio" name="q10" value="Толстая кишка не пальпируется" onclick="checkAnswer('q10','fb10')"> f. Толстая кишка не пальпируется</label>
+      <div id="fb10" class="feedback"></div>
+    </div>
+
+    <!-- Вопрос 11 -->
+    <div class="question">
+      <p><strong>Вопрос 11. Предварительная диагностическая гипотеза:</strong></p>
+      <label><input type="radio" name="q11" value="Норма" onclick="checkAnswer('q11','fb11')"> a. Норма</label><br>
+      <label><input type="radio" name="q11" value="Гепатомегалия, желтуха" onclick="checkAnswer('q11','fb11')"> b. Гепатомегалия, желтуха</label><br>
+      <label><input type="radio" name="q11" value="Спленомегалия" onclick="checkAnswer('q11','fb11')"> c. Спленомегалия</label><br>
+      <label><input type="radio" name="q11" value="Гепатоспленомегалия, желтуха" onclick="checkAnswer('q11','fb11')"> d. Гепатоспленомегалия, желтуха</label><br>
+      <label><input type="radio" name="q11" value="Асцит, гепатомегалия, желтуха" onclick="checkAnswer('q11','fb11')"> e. Асцит, гепатомегалия, желтуха</label>
+      <div id="fb11" class="feedback"></div>
+    </div>
+
+    <!-- Вопрос 12 -->
+    <div class="question">
+      <p><strong>Вопрос 12. Необходимость дополнительного обследования:</strong></p>
+      <label><input type="radio" name="q12" value="Не требуется" onclick="checkAnswer('q12','fb12')"> a. Не требуется</label><br>
+      <label><input type="radio" name="q12" value="УЗИ органов брюшной полости" onclick="checkAnswer('q12','fb12')"> b. УЗИ органов брюшной полости</label><br>
+      <label><input type="radio" name="q12" value="МРТ органов брюшной полости" onclick="checkAnswer('q12','fb12')"> c. МРТ органов брюшной полости</label><br>
+      <label><input type="radio" name="q12" value="Лапароцентез" onclick="checkAnswer('q12','fb12')"> d. Лапароцентез</label>
+      <div id="fb12" class="feedback"></div>
+    </div>
+  </div>
+</body>
+</html>
